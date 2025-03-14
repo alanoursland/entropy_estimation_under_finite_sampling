@@ -9,6 +9,7 @@ This module provides core functions for entropy estimation using histograms with
 import torch
 import math
 import os
+import math
 from typing import Optional, Tuple, Dict, List, Union
 
 
@@ -159,3 +160,16 @@ def occupancy_based_bins(N: int, C: float = 5, max_bins: int = 1024) -> int:
         Recommended number of bins.
     """
     return min(max_bins, int(N / C))
+
+def sweet_spot_bins(N: int, C: float = 20) -> int:
+    """
+    Selects the number of bins based on the 'sweet spot' N/M ratio.
+
+    Args:
+        N: The number of samples.
+        C: The target N/M ratio (e.g., 20).
+
+    Returns:
+        The recommended number of bins.
+    """
+    return math.ceil(round(N / C))
