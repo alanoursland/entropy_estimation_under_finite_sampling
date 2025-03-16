@@ -2,44 +2,25 @@
 import torch
 import torch.nn as nn
 
-class H_ev_Model1(nn.Module):
+class H_ev_Model(nn.Module):
     def __init__(self, device):
         super().__init__()
-        self.a = nn.Parameter(torch.tensor(1.0, device=device))
-        self.b = nn.Parameter(torch.tensor(0.0, device=device))
+        self.A = nn.Parameter(torch.tensor(1.0, device=device))
+        self.B = nn.Parameter(torch.tensor(1.0, device=device))
+        self.C = nn.Parameter(torch.tensor(0.1, device=device))
+        self.D = nn.Parameter(torch.tensor(1.0, device=device))
 
     def forward(self, N, M):
-        return torch.log(M) * (1 - torch.exp(-self.a * (N / M))) + self.b
+        return self.A * torch.log(M) + self.B * (1 - torch.exp(-self.C * (N / M**self.D)))
 
-class H_ev_Model2(nn.Module):
+class Sigma_ev_Model(nn.Module):
     def __init__(self, device):
         super().__init__()
-        self.a = nn.Parameter(torch.tensor(1.0, device=device))
-        self.b = nn.Parameter(torch.tensor(0.0, device=device))
-        self.c = nn.Parameter(torch.tensor(0.0, device=device))
+        self.A = nn.Parameter(torch.tensor(0.1, device=device))
+        self.B = nn.Parameter(torch.tensor(0.1, device=device))
+        self.C = nn.Parameter(torch.tensor(1.0, device=device))
+        self.D = nn.Parameter(torch.tensor(0.1, device=device))
+        self.E = nn.Parameter(torch.tensor(0.01, device=device))
 
     def forward(self, N, M):
-        return torch.log(M) * (1 - torch.exp(-self.a * (N / M))) + self.c * torch.log(N) + self.b
-
-class Sigma_ev_Model1(nn.Module):
-    def __init__(self, device):
-        super().__init__()
-        self.a = nn.Parameter(torch.tensor(0.1, device=device))
-        self.b = nn.Parameter(torch.tensor(0.5, device=device))
-        self.c = nn.Parameter(torch.tensor(0.01, device=device))
-
-    def forward(self, N, M):
-        return self.a * (N / M)**(-self.b) + self.c
-
-class Sigma_ev_Model2(nn.Module):
-    def __init__(self, device):
-        super().__init__()
-        self.a = nn.Parameter(torch.tensor(0.1, device=device))
-        self.b = nn.Parameter(torch.tensor(0.1, device=device))
-        self.c = nn.Parameter(torch.tensor(1.0, device=device))
-        self.d = nn.Parameter(torch.tensor(0.1, device=device))
-        self.e = nn.Parameter(torch.tensor(0.01, device=device))
-
-    def forward(self, N, M):
-        n_over_m = N/M
-        return (self.a + self.b * n_over_m) / (self.c + self.d * n_over_m + self.e * n_over_m**2)
+        return self.A / (1 + self.B * (N / M**self.C)) + self.D * torch.exp(-self.E * M)

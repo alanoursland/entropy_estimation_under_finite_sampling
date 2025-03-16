@@ -8,7 +8,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from putils import Timer
-from experiment1_models import H_ev_Model1, H_ev_Model2, Sigma_ev_Model1, Sigma_ev_Model2
+# from experiment1_models import H_ev_Model1, H_ev_Model2, Sigma_ev_Model1, Sigma_ev_Model2
+from experiment1_models import H_ev_Model, Sigma_ev_Model
 
 def curve_fitting(data_dir='results/entropy_data', device='cuda'):
     """
@@ -65,24 +66,26 @@ def curve_fitting(data_dir='results/entropy_data', device='cuda'):
         return losses
 
     # Instantiate models, optimizers, and loss function
-    h_ev_model1 = H_ev_Model1(device)
-    h_ev_model2 = H_ev_Model2(device)
-    sigma_ev_model1 = Sigma_ev_Model1(device)
-    sigma_ev_model2 = Sigma_ev_Model2(device)
+    # h_ev_model1 = H_ev_Model1(device)
+    # h_ev_model2 = H_ev_Model2(device)
+    # sigma_ev_model1 = Sigma_ev_Model1(device)
+    # sigma_ev_model2 = Sigma_ev_Model2(device)
+    h_ev_model = H_ev_Model(device)
+    sigma_ev_model = Sigma_ev_Model(device)
 
-    optimizer_H1 = optim.Adam(h_ev_model1.parameters(), lr=0.01)
-    optimizer_H2 = optim.Adam(h_ev_model2.parameters(), lr=0.01)
-    optimizer_sigma1 = optim.Adam(sigma_ev_model1.parameters(), lr=0.01)
-    optimizer_sigma2 = optim.Adam(sigma_ev_model2.parameters(), lr=0.01)
+    optimizer_H1 = optim.Adam(h_ev_model.parameters(), lr=0.01)
+    # optimizer_H2 = optim.Adam(h_ev_model2.parameters(), lr=0.01)
+    optimizer_sigma1 = optim.Adam(sigma_ev_model.parameters(), lr=0.01)
+    # optimizer_sigma2 = optim.Adam(sigma_ev_model2.parameters(), lr=0.01)
 
     loss_fn = nn.MSELoss()
 
     # Train models and store losses
     losses = {}
-    losses["H_ev1"] = train_model(h_ev_model1, results, optimizer_H1, loss_fn, model_name = "H_ev1")
-    losses["H_ev2"] = train_model(h_ev_model2, results, optimizer_H2, loss_fn, model_name = "H_ev2")
-    losses["sigma_ev1"] = train_model(sigma_ev_model1, results, optimizer_sigma1, loss_fn, model_name="sigma_ev1")
-    losses["sigma_ev2"] = train_model(sigma_ev_model2, results, optimizer_sigma2, loss_fn, model_name="sigma_ev2")
+    losses["H_ev"] = train_model(h_ev_model, results, optimizer_H1, loss_fn, model_name = "H_ev")
+    # losses["H_ev2"] = train_model(h_ev_model2, results, optimizer_H2, loss_fn, model_name = "H_ev2")
+    losses["sigma_ev"] = train_model(sigma_ev_model, results, optimizer_sigma1, loss_fn, model_name="sigma_ev")
+    # losses["sigma_ev2"] = train_model(sigma_ev_model2, results, optimizer_sigma2, loss_fn, model_name="sigma_ev2")
 
     # --- 4. Model Evaluation ---
     def calculate_r_squared(model, results, model_name):
@@ -120,10 +123,12 @@ def curve_fitting(data_dir='results/entropy_data', device='cuda'):
 
         return r2.item()  # Return as a Python float
 
-    print(f"R-squared (H_ev_Model1): {calculate_r_squared(h_ev_model1, results, 'H_ev1'):.4f}")
-    print(f"R-squared (H_ev_Model2): {calculate_r_squared(h_ev_model2, results, 'H_ev2'):.4f}")
-    print(f"R-squared (Sigma_ev_Model1): {calculate_r_squared(sigma_ev_model1, results, 'sigma_ev1'):.4f}")
-    print(f"R-squared (Sigma_ev_Model2): {calculate_r_squared(sigma_ev_model2, results, 'sigma_ev2'):.4f}")
+    # print(f"R-squared (H_ev_Model1): {calculate_r_squared(h_ev_model1, results, 'H_ev1'):.4f}")
+    # print(f"R-squared (H_ev_Model2): {calculate_r_squared(h_ev_model2, results, 'H_ev2'):.4f}")
+    # print(f"R-squared (Sigma_ev_Model1): {calculate_r_squared(sigma_ev_model1, results, 'sigma_ev1'):.4f}")
+    # print(f"R-squared (Sigma_ev_Model2): {calculate_r_squared(sigma_ev_model2, results, 'sigma_ev2'):.4f}")
+    print(f"R-squared (H_ev_Model): {calculate_r_squared(h_ev_model, results, 'H_ev'):.4f}")
+    print(f"R-squared (Sigma_ev_Model): {calculate_r_squared(sigma_ev_model, results, 'sigma_ev'):.4f}")
 
      # --- 5. Visualize ---
     # def plot_results(model, results, model_name, Ns, Ms):
@@ -193,10 +198,12 @@ def curve_fitting(data_dir='results/entropy_data', device='cuda'):
 
 
     # --- 6. Save Models ---
-    torch.save(h_ev_model1.state_dict(), os.path.join(data_dir, 'model_h_ev_1.pt'))
-    torch.save(h_ev_model2.state_dict(), os.path.join(data_dir, 'model_h_ev_2.pt'))
-    torch.save(sigma_ev_model1.state_dict(), os.path.join(data_dir, 'model_sigma_ev_1.pt'))
-    torch.save(sigma_ev_model2.state_dict(), os.path.join(data_dir, 'model_sigma_ev_2.pt'))
+    # torch.save(h_ev_model1.state_dict(), os.path.join(data_dir, 'model_h_ev_1.pt'))
+    # torch.save(h_ev_model2.state_dict(), os.path.join(data_dir, 'model_h_ev_2.pt'))
+    # torch.save(sigma_ev_model1.state_dict(), os.path.join(data_dir, 'model_sigma_ev_1.pt'))
+    # torch.save(sigma_ev_model2.state_dict(), os.path.join(data_dir, 'model_sigma_ev_2.pt'))
+    torch.save(h_ev_model.state_dict(), os.path.join(data_dir, 'model_h_ev.pt'))
+    torch.save(sigma_ev_model.state_dict(), os.path.join(data_dir, 'model_sigma_ev.pt'))
     print(f"Models saved to {data_dir}")
 
 if __name__ == '__main__':

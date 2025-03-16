@@ -7,7 +7,8 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import ScalarFormatter
 import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
-from experiment1_models import H_ev_Model1, H_ev_Model2, Sigma_ev_Model1, Sigma_ev_Model2
+# from experiment1_models import H_ev_Model1, H_ev_Model2, Sigma_ev_Model1, Sigma_ev_Model2
+from experiment1_models import H_ev_Model, Sigma_ev_Model
 
 # Assuming hist.py is in the same directory (or in your PYTHONPATH)
 # If not, you'll need to adjust the import statement.
@@ -33,16 +34,20 @@ def display_curves(data_dir='results/entropy_data', device='cuda'):
     # --- 2. Define Model Classes (from experiment1_models.py) ---
 
     # --- 3. Load Models ---
-    h_ev_model1 = H_ev_Model1(device)
-    h_ev_model2 = H_ev_Model2(device)
-    sigma_ev_model1 = Sigma_ev_Model1(device)
-    sigma_ev_model2 = Sigma_ev_Model2(device)
+    # h_ev_model1 = H_ev_Model1(device)
+    # h_ev_model2 = H_ev_Model2(device)
+    # sigma_ev_model1 = Sigma_ev_Model1(device)
+    # sigma_ev_model2 = Sigma_ev_Model2(device)
+    h_ev_model = H_ev_Model(device)
+    sigma_ev_model = Sigma_ev_Model(device)
 
     try:
-        h_ev_model1.load_state_dict(torch.load(os.path.join(data_dir, 'model_h_ev_1.pt')))
-        h_ev_model2.load_state_dict(torch.load(os.path.join(data_dir, 'model_h_ev_2.pt')))
-        sigma_ev_model1.load_state_dict(torch.load(os.path.join(data_dir, 'model_sigma_ev_1.pt')))
-        sigma_ev_model2.load_state_dict(torch.load(os.path.join(data_dir, 'model_sigma_ev_2.pt')))
+        # h_ev_model1.load_state_dict(torch.load(os.path.join(data_dir, 'model_h_ev_1.pt')))
+        # h_ev_model2.load_state_dict(torch.load(os.path.join(data_dir, 'model_h_ev_2.pt')))
+        # sigma_ev_model1.load_state_dict(torch.load(os.path.join(data_dir, 'model_sigma_ev_1.pt')))
+        # sigma_ev_model2.load_state_dict(torch.load(os.path.join(data_dir, 'model_sigma_ev_2.pt')))
+        h_ev_model.load_state_dict(torch.load(os.path.join(data_dir, 'model_h_ev.pt')))
+        sigma_ev_model.load_state_dict(torch.load(os.path.join(data_dir, 'model_sigma_ev.pt')))
     except FileNotFoundError as e:
         raise FileNotFoundError(f"Could not find model .pt files in {data_dir}. Make sure to run experiment1_curve_fitting.py first.") from e
 
@@ -110,10 +115,12 @@ def display_curves(data_dir='results/entropy_data', device='cuda'):
 
 
     # Call the plotting function for each model
-    plot_results(h_ev_model1, results, "H_ev1", Ns, Ms)
-    plot_results(h_ev_model2, results, "H_ev2", Ns, Ms)
-    plot_results(sigma_ev_model1, results, "sigma_ev1", Ns, Ms)
-    plot_results(sigma_ev_model2, results, "sigma_ev2", Ns, Ms)
+    # plot_results(h_ev_model1, results, "H_ev1", Ns, Ms)
+    # plot_results(h_ev_model2, results, "H_ev2", Ns, Ms)
+    # plot_results(sigma_ev_model1, results, "sigma_ev1", Ns, Ms)
+    # plot_results(sigma_ev_model2, results, "sigma_ev2", Ns, Ms)
+    plot_results(h_ev_model, results, "H_ev", Ns, Ms)
+    plot_results(sigma_ev_model, results, "sigma_ev", Ns, Ms)
 
 if __name__ == '__main__':
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
